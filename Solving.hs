@@ -1,3 +1,8 @@
+module Solving where
+
+import Text.Parsec
+import Text.Parsec.String (Parser) 
+
 data Expr = Const Double
     | Var
     |Add Expr Expr
@@ -41,4 +46,37 @@ newton expr exprDao x0 wc maxn = loop x0 0
                             then Just x1
                             else loop x1 (n + 1)
 
---已测试通过
+-- 解析字符串为 Expr
+parseExpr :: String -> Maybe Expr
+parseExpr input = case parse exprParser "" input of
+    Right e -> Just e
+    Left _ -> Nothing
+
+exprParser :: Parser Expr
+exprParser = do
+    spaces
+    e <- addSub
+    eof
+    return e
+
+addSub :: Parser Expr
+addSub = chainl1 mulDiv (try (char '+' >> return Add) <|> try (char '-' >> return Sub))
+
+mulDiv :: Parser Expr
+mulDiv = chainl1 factor (try (char '*' >> return Mul) <|> try (char '/' >> return Div))
+
+factor :: Parser Expr
+factor = try (do
+    char '('
+    spaces
+    e <- addSub
+    spaces
+    char ')'
+    return e
+    ) <|> try (do
+    string "x"
+    return Var
+    ) <|> try (do
+    n <- many1 digit
+    return (Const (read n))
+    )

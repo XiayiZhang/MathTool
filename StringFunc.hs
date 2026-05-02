@@ -1,4 +1,6 @@
-import Data.List (isPrefixOf, tails)
+module StringFunc where
+
+import Data.List (isPrefixOf, tails, stripPrefix)
 import Data.Maybe (listToMaybe)
 
 --ai写的
