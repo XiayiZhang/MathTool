@@ -19,3 +19,4 @@ printFunc n = loop 1 ""
       | otherwise = do
           let b = replicate ( n !! i - min) ' '
           loop (i+1) (a ++ b ++ "*\n")
+--能用就行，函数画出来反的，把头扭过来看。
