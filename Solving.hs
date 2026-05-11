@@ -14,6 +14,7 @@ data Expr = Const Double
     |Sin Expr
     |Cos Expr
     |Tan Expr
+    |Sqrt Expr
     deriving (Show, Eq)
 
 eval :: Expr -> Double -> Double
@@ -27,6 +28,7 @@ eval (Pow a (Const n)) x = eval a x ** n
 eval (Sin a) x = sin (eval a x)
 eval (Cos a) x = cos (eval a x)
 eval (Tan a) x = tan (eval a x)
+eval (Sqrt a) x = sqrt (eval a x)
 
 diff :: Expr -> Expr --求导
 diff (Const _) = Const 0
@@ -39,10 +41,10 @@ diff (Pow a (Const n)) = Mul (Mul (Const n) (Pow a (Const (n-1)))) (diff a)
 diff (Sin a) = Mul (Cos a) (diff a)
 diff (Cos a) = Mul (Mul (Const (-1)) (Sin a)) (diff a)
 diff (Tan a) = Mul (Add (Const 1) (Pow (Tan a) (Const 2))) (diff a)
+diff (Sqrt a) = Mul (Div (Const 1) (Mul (Const 2) (Sqrt a))) (diff a)
 
--- 牛顿法
 newton :: Expr -> Expr -> Double -> Double -> Int -> Maybe Double
--- 函数，导函数，猜测值，误差，最大迭代数，根
+--函数/导函数\猜测值/误差/最大迭代，rt
 newton expr exprDao x0 wc maxn = loop x0 0
     where
         loop x n
@@ -58,7 +60,7 @@ newton expr exprDao x0 wc maxn = loop x0 0
                             then Just x1
                             else loop x1 (n + 1)
 
--- 解析字符串为 Expr
+-- 解析Expr
 parseExpr :: String -> Maybe Expr
 parseExpr input = case parse exprParser "" input of
     Right e -> Just e
@@ -122,4 +124,13 @@ factor = choice
     , try (do
         n <- many1 digit
         return (Const (read n)) )
+    , try (do
+        string "sqrt"
+        spaces
+        char '('
+        spaces
+        e <- addSub
+        spaces
+        char ')'
+        return (Sqrt e) )
     ]
