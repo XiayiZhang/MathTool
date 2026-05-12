@@ -25,4 +25,17 @@ subP :: Dxs -> Dxs -> Dxs
 subP p1 p2 = addP p1 (map negate p2)
 
 mulP :: Dxs -> Dxs -> Dxs --卷积
-mulP p1 p2 = foldr addPoly [] [ replicate i 0 ++ map (c*) p2 | (i,c) <- zip [0..] p1 ]
+mulP p1 p2 = foldr addP [] [ replicate i 0 ++ map (c*) p2 | (i,c) <- zip [0..] p1 ]
+
+showPoly :: Dxs -> String
+showPoly [] = "0"
+showPoly coeffs = unwords $ filter (not . null) $ zipWith showTerm coeffs [0..]
+  where
+    showTerm 0 _ = ""
+    showTerm c 0 = show c
+    showTerm 1 1 = "x"
+    showTerm (-1) 1 = "-x"
+    showTerm c 1 = show c ++ "x"
+    showTerm 1 n = "x^" ++ show n
+    showTerm (-1) n = "-x^" ++ show n
+    showTerm c n = show c ++ "x^" ++ show n
