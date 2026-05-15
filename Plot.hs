@@ -8,13 +8,13 @@ width = 80
 height = 80
 
 -- Generate an 80x80 ASCII plot for f over [x0, x1].
-{-慢慢看吧
+-- 慢慢看吧
 drawPlot :: Expr -> Double -> Double -> [String]
 drawPlot f x0 x1 = grid2
   where
     xs = [x0 + dx * fromIntegral i | i <- [0 .. width - 1]]
     dx = (x1 - x0) / fromIntegral (width - 1)
-    ys = map eval f xs
+    ys = map (eval f) xs
     finiteSamples = [ (i, y) | (i, y) <- zip [0 ..] ys, isFinite y ]
     isFinite y = not (isNaN y || isInfinite y)
     (yMin, yMax)
@@ -48,4 +48,3 @@ drawPlot f x0 x1 = grid2
       | v < mn = mn
       | v > mx = mx
       | otherwise = v
--}

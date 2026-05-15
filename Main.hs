@@ -2,16 +2,16 @@ import Text.Read (readMaybe)
 import Solving (Expr(..), eval, diff, newton, parseExpr)
 import StringFunc (findSubstr, findBetween)
 import Poly (zhuanhuan, showPoly)
---import Plot (drawPlot)
+import Plot (drawPlot)
 
 main :: IO ()
 main = do
-    putStrLn "请输入 1 或 2："
+    putStrLn "请输入1或2："
     a <- getLine
     case a of
         "1" -> foo
         "2" -> bar
-        _   -> putStrLn "无效输入，请输入 1 或 2。"
+        _   -> putStrLn "无效输入，请输入1或2。"
             
 foo :: IO ()
 foo = do
@@ -20,7 +20,7 @@ foo = do
     case parseExpr a of
         Just f -> do
             putStrLn $ "func graph of y = " ++ a
-            --mapM_ putStrLn (drawPlot f (-10) 10)
+            mapM_ putStrLn (drawPlot f (-10) 10)
             print $ "root of " ++ a ++ " = 0"
             let f' = diff f
             let result = newton f f' 1.0 1e-8 100
